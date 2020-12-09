@@ -71,6 +71,11 @@ describe('Testing reading functioality of the BoardgameRepository Class', () => 
     expect(result).toEqual(boardgames.slice(0,20));
     expect(maxPage).toEqual(2);
   });
+  it('should return an array of boardgame with the designated id', async () => {
+    const [result, maxPage] = await boardgameRepository.FindBoardgames(1,undefined,undefined)
+    expect(result).toEqual(boardgames.slice(0,1));
+    expect(maxPage).toEqual(1);
+  });
 
   
   it('should return an empty array if the name is not contained in the database', async () => {

@@ -36,9 +36,11 @@ describe('Testing reading functioality of the TransactionRepository Class', () =
 
   it('should be able to write the Transaction', async () => {
     const result = await transactionRepository.SaveTransaction(address,total,boardgames)
-    let transaction
-    transactionConnection.find({}).forEach(trans => new Transaction(trans.id,trans.address,trans.total,trans.items) )
-    expect(transaction).toEqual(result)
+    expect(result.address).toEqual(address)
+    expect(result.items.length).toEqual(boardgames.length)
+    expect(result.total).toEqual(total)
+
+
   });
 
   it('should throw an error for empty items', async () => {

@@ -26,31 +26,36 @@ class BoardgameRepository implements IBoardgameRepository {
     
     async FindBoardgames(id?:number, name?:string, page:number = 1):Promise<[Boardgame[],number]> {
         const query = this.QueryBuilder(id,name)
-        if(page <= 0) {
-            throw new RepositoryError("Invalid input parameter");
+        try{
+            if(page <= 0) {
+                throw new RepositoryError("Invalid input parameter");
+            }
+            let boardgames:Boardgame[] = []
+            let cursor = this.database.collection("boardgame").find(query)
+            const maximumPage = await this.CalculateMaximumPage(cursor);
+            const skip = (page-1)*20
+            if(page > maximumPage) {
+                return([[], maximumPage]);
+            }
+            await cursor.skip(skip).limit(20).forEach((game) => {
+                boardgames.push(new Boardgame(
+                    game.id,
+                    game.name,
+                    game.rating,
+                    game.minPlayer,
+                    game.maxPlayer,
+                    game.price,
+                    game.quantity,
+                    game.category,
+                    game.mechanic,
+                    game._id
+                ))
+            })
+            return[boardgames,maximumPage];
         }
-        let boardgames:Boardgame[] = []
-        let cursor = this.database.collection("boardgame").find(query)
-        const maximumPage = await this.CalculateMaximumPage(cursor);
-        const skip = (page-1)*20
-        if(page > maximumPage) {
-            return([[], maximumPage]);
+        catch(err) {
+            throw err;
         }
-        await cursor.skip(skip).limit(20).forEach((game) => {
-            boardgames.push(new Boardgame(
-                game.id,
-                game.name,
-                game.rating,
-                game.minPlayer,
-                game.maxPlayer,
-                game.price,
-                game.quantity,
-                game.category,
-                game.mechanic,
-                game._id
-            ))
-        })
-        return[boardgames,maximumPage];
     }
 }
 

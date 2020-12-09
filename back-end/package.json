@@ -24,6 +24,7 @@
   "dependencies": {
     "@babel/preset-typescript": "^7.12.7",
     "fastify": "^3.9.1",
-    "mongodb": "^3.6.3"
+    "mongodb": "^3.6.3",
+    "uuid": "^8.3.2"
   }
 }
