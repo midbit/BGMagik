@@ -1,7 +1,7 @@
 class Boardgame {
     id: number
     rating?: number
-    name?: string
+    name: string
     minPlayer?: number
     maxPlayer?: number
     price?: number
@@ -11,6 +11,7 @@ class Boardgame {
 
     constructor(
         id:number, 
+        name: string,
         rating?:number, 
         minPlayer?:number, 
         maxPlayer?:number, 
@@ -20,6 +21,7 @@ class Boardgame {
         mechanic?:string[]
     ) { 
        this.id = id;
+       this.name = name;
        this.rating = rating;
        this.minPlayer = minPlayer;
        this.maxPlayer = maxPlayer;

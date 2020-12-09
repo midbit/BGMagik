@@ -1,15 +1,15 @@
 import IBoardgameRepository from "../interface/boardgame_repository";
 import Boardgame from "../model/boardgame";
-
+import Mongo from "mongodb"
 class BoardgameRepository implements IBoardgameRepository {
+    database: Mongo.Db;
 
-    constructor() {
-
+    constructor(database: Mongo.Db) {
+        this.database = database;
     }
 
-    FindBoardgames(id?:number, name?:string, page?:number):Boardgame[] {
-
-        return[];
+    async FindBoardgames(id?:number, name?:string, page?:number):Promise<[Boardgame[],number]> {
+        return[[],0];
     }
 }
 
