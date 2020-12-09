@@ -1,7 +1,7 @@
 import IBoardgameRepository from "../interface/boardgame_repository";
 import Boardgame from "../model/boardgame";
 import Mongo from "mongodb";
-import RepositoryError from "../error/boardgame_repository";
+import RepositoryError from "../error/repository";
 
 class BoardgameRepository implements IBoardgameRepository {
     database: Mongo.Db;
