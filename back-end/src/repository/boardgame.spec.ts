@@ -1,6 +1,5 @@
 import BoardgameRepository from "./boardgame";
 import Boardgame from "../model/boardgame";
-import RepositoryError from "../error/boardgame_repository";
 
 const {MongoClient} = require('mongodb');
 
