@@ -12,12 +12,14 @@ class TransactionRepository implements ITransactionRepository {
     constructor(database: Mongo.Db) {
         this.database = database;
     }
+
     private GenerateTransactionId():string {
         return uuidv4();
     }
+    
     async SaveTransaction(address:string, total:number, items:Boardgame[]):Promise<Transaction> {
         if(items.length <= 0 || total < 0) {
-            throw new RepositoryError("Invalid Input")
+            throw new RepositoryError("Invalid Input Parameter")
         }
         const id = this.GenerateTransactionId()
         try{
