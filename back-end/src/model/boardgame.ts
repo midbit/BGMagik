@@ -6,8 +6,8 @@ class Boardgame {
     maxPlayer?: number
     price?: number
     quantity?: number
-    category?:[string]
-    mechanic?:[string]
+    category?:string[]
+    mechanic?:string[]
 
     constructor(
         id:number, 
@@ -16,8 +16,8 @@ class Boardgame {
         maxPlayer?:number, 
         price?:number, 
         quantity?:number, 
-        category?:[string], 
-        mechanic?:[string]
+        category?:string[], 
+        mechanic?:string[]
     ) { 
        this.id = id;
        this.rating = rating;
