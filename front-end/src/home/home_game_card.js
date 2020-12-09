@@ -6,6 +6,12 @@ import { store } from '../store/store';
 const GameCard = ({id, name, minPlayer, maxPlayer, rating, price, quantity}) => {
     const globalState = useContext(store);
     const {dispatch} = globalState
+
+    const addItem = (id,name,price) => {
+        dispatch({type: "ADD_ITEM", payload:{id,name,price}})
+        dispatch({type: "REMOVE_QUANTITY", payload:{id}})
+    }
+    
     return(
         <Card  
             animation="slideRight"          
@@ -114,7 +120,7 @@ const GameCard = ({id, name, minPlayer, maxPlayer, rating, price, quantity}) => 
                 label="Buy"
                 disabled={quantity <= 0}
                 alignSelf="center"
-                onClick={() => dispatch({type: "ADD_ITEM", payload:{id,name,price}})}
+                onClick={() => addItem(id,name,price)}
                 />
             </CardFooter>
         </Card>

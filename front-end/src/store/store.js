@@ -32,14 +32,6 @@ const StateProvider = ( { children } ) => {
 
         case 'REMOVE_ITEM':
             const removedItem = {...action.payload}
-            const currentItemListAfterRemove = state.items.map(item => {
-                if(removedItem.id === item.id)
-                {
-                    const newQuantity = item.quantity + 1;
-                    return {...item, quantity: newQuantity}
-                }
-                return {...item}
-             })
             const itemList = state.cart.items.map(item => {
                 if(item.id === removedItem.id)
                 {
@@ -48,18 +40,10 @@ const StateProvider = ( { children } ) => {
                 }
                 return {...item};
             }).filter(item => item.quantity > 0);
-            return {...state, items:[...currentItemListAfterRemove], cart:{...state.cart, items:itemList}};
+            return {...state, cart:{...state.cart, items:itemList}};
 
         case 'ADD_ITEM':
             const addedItem = {...action.payload}
-            const currentItemList = state.items.map(item => {
-                if(addedItem.id === item.id)
-                {
-                    const newQuantity = item.quantity - 1;
-                    return {...item, quantity: newQuantity}
-                }
-                return {...item}
-             })
             const isInList = state.cart.items.filter(item => item.id === addedItem.id).length > 0
             if(isInList) {
                 const addItemList = state.cart.items.map(item => {
@@ -70,13 +54,35 @@ const StateProvider = ( { children } ) => {
                     }
                     return {...item};
                 })
-                return {...state, items: [...currentItemList], cart: {...state.cart, items: [...addItemList]}};
+                return {...state, cart: {...state.cart, items: [...addItemList]}};
             }
             else {
-                return {...state, items: [...currentItemList], cart: {...state.cart, items: [...state.cart.items, {...addedItem, quantity:1}]}};
+                return {...state, cart: {...state.cart, items: [...state.cart.items, {...addedItem, quantity:1}]}};
             }
-            
-            
+        
+        case 'ADD_QUANTITY':
+            const addedBrowseItem = {...state.payload}
+            const addedBrowseItemList = state.items.map(item => {
+                if(addedBrowseItem.id === item.id)
+                {
+                    const newQuantity = item.quantity + 1;
+                    return {...item, quantity: newQuantity}
+                }
+                return {...item}
+             })
+             return{...state, items:[...addedBrowseItemList]}
+
+        case 'REMOVE_QUANTITY':
+            const removedBrowseItem = {...state.payload}
+            const removedBrowseItemList = state.items.map(item => {
+                if(removedBrowseItem.id === item.id)
+                {
+                    const newQuantity = item.quantity - 1;
+                    return {...item, quantity: newQuantity}
+                }
+                return {...item}
+            })
+            return{...state, items:[...removedBrowseItemList]}
 
         case 'INCREMET_PAGE':
             const incrementPage =+ state.page.currentPage;

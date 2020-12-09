@@ -7,6 +7,7 @@ const TotalPayment = ({updateStep}) => {
     const globalState = useContext(store);
     const {state, dispatch} = globalState;
     const items = state.cart.items;
+
     const generateGrandTotalData = (items) => {
         var total = 0
         const checkData = items.map(item => {
@@ -18,7 +19,14 @@ const TotalPayment = ({updateStep}) => {
         const grandTotal = vat + total;
         return [...checkData, {name:"Vat",quantity:"", total:vat},{name:"Total",quantity:"", total:grandTotal}];
     }
+
     const grandTotalData = useMemo(() => generateGrandTotalData(items), [items])
+
+    const removeItem = (id) => {
+        dispatch({type:"REMOVE_ITEM", payload:{id}})
+        dispatch({type:"ADD_QUANTITY", payload:{id}})
+
+    }
     return(
         <Box pad="medium" animation="slideLeft"> 
             <Heading level="3"> Check Out</Heading>
@@ -44,7 +52,7 @@ const TotalPayment = ({updateStep}) => {
                                     <Text> {datum.name}</Text>
                                     <Button 
                                     icon={<FormTrash/>}
-                                    onClick={() => dispatch({type:"REMOVE_ITEM", payload:{id:datum.id}})}
+                                    onClick={() => removeItem(datum.id)}
                                     />
                                  </Box>
                                 )
