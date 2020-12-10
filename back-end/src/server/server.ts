@@ -2,6 +2,9 @@ import IBoardgameRepository from "../interface/boardgame_repository";
 import ITransactionRepository from "../interface/transaction_repository";
 import fastify, { FastifyReply, FastifyRequest, FastifyInstance } from 'fastify';
 import Boardgame from "../model/boardgame";
+import { MongoError } from "mongodb";
+import RepositoryError from "../error/repository";
+import { isUndefined } from "util";
 
 interface IRouteParameter {
     id: number
@@ -18,6 +21,18 @@ interface IWriteTransactionBody {
     items: Boardgame[]
 }
 
+function ValidateQuery(request:FastifyRequest, reply:FastifyReply, done:any):void {
+    const {page}:any = request.query
+    if(!isUndefined(page)) {
+        let page_number = parseInt(page);  
+        if(isNaN(page_number) || page_number <= 0)
+        {
+            reply.status(401);
+            reply.send("Invalid page number");
+        }
+    }
+    done(undefined);
+}
 
 class Server {
     boardgameRepository: IBoardgameRepository
@@ -33,8 +48,10 @@ class Server {
         reply.send(id)
     }
 
-    Find(request:FastifyRequest, reply:FastifyReply): void {
-        reply.send("pong")
+    async Find(request:FastifyRequest, reply:FastifyReply) {
+        const {name,page}:any = request.query;
+        const [boardgames, count] = await this.boardgameRepository.FindBoardgames(undefined,name,page);
+        reply.send({...boardgames});
     }
 
     WriteTransaction(request:FastifyRequest, reply:FastifyReply): void {
@@ -46,9 +63,32 @@ class Server {
 const buildServer = (boardgameRepository:IBoardgameRepository, transactionRepository:ITransactionRepository):FastifyInstance => {
     const server = new Server(boardgameRepository,transactionRepository);
     const fastifyServer:FastifyInstance = fastify();
-    fastifyServer.get<{Querystring:IQuery}>('/boardgames', server.Find);
+
+    fastifyServer.get<{Querystring:IQuery}>(
+        '/boardgames', 
+        {
+            preValidation: ValidateQuery,
+        }, 
+        async (request:FastifyRequest, reply:FastifyReply) => {
+            const {name,page}:any = request.query;
+            try {
+                const [boardgames, maxPage] = await boardgameRepository.FindBoardgames(undefined,name,page);
+                reply.send(JSON.stringify({items:[...boardgames], maxPage}));
+            }
+            catch (e) {
+                if(e instanceof MongoError) {
+                    reply.status(500);
+                    reply.send("Something is wrong with the server please try again later.");
+                }
+                if(e instanceof RepositoryError) {
+                    reply.status(401);
+                    reply.send("Invalid input.");
+                }
+            } 
+    });
+
     fastifyServer.post<{Body:IWriteTransactionBody}>('/transaction', server.WriteTransaction);
-    fastifyServer.get<{Params:IRouteParameter}>('/boardgame/:id', server.FindOneById);
+    fastifyServer.get<{Params:IRouteParameter}>('/boardgames/:id',  server.FindOneById);
     return fastifyServer;
 }
 
