@@ -48,6 +48,7 @@ class BoardgameRepository implements IBoardgameRepository {
                     game.quantity,
                     game.category,
                     game.mechanic,
+                    game.image_url,
                     game._id
                 ))
             })

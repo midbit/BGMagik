@@ -9,7 +9,7 @@ class Boardgame {
     quantity?: number
     category?:string[]
     mechanic?:string[]
-
+    image_url?:string
     constructor(
         id:number, 
         name: string,
@@ -20,6 +20,7 @@ class Boardgame {
         quantity?:number, 
         category?:string[], 
         mechanic?:string[],
+        image_url?: string,
         _id?: any
         ) { 
             this.id = id;
@@ -31,6 +32,7 @@ class Boardgame {
             this.quantity = quantity;
             this.category = category;
             this.mechanic = mechanic;
+            this.image_url = image_url;
             this._id = _id;
         }
 }
