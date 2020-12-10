@@ -2,14 +2,17 @@ import {Card, CardHeader, CardBody, CardFooter, Button, Text, Box, Grid} from 'g
 import {Add, Star, User, Money, Inbox, Info} from 'grommet-icons'
 import React, { useContext } from 'react';
 import { store } from '../store/store';
+import { useHistory } from "react-router-dom";
 
-const GameCard = ({id, name, minPlayer, maxPlayer, rating, price, quantity}) => {
+const GameCard = ({id, name, minPlayer, maxPlayer, rating, price, quantity, image_url}) => {
     const globalState = useContext(store);
     const {dispatch} = globalState
+    const history = useHistory();
+
 
     const addItem = (id,name,price) => {
         dispatch({type: "ADD_ITEM", payload:{id,name,price}})
-        dispatch({type: "REMOVE_QUANTITY", payload:{id}})
+        dispatch({type: "REMOVE_QUANTITY", payload:{id,name,price}})
     }
     
     return(
@@ -34,7 +37,7 @@ const GameCard = ({id, name, minPlayer, maxPlayer, rating, price, quantity}) => 
                 direction="column"
                 flex="grow"
             >
-                <Box height="small" background="url(//v2.grommet.io/assets/Wilderpeople_Ricky.jpg)"/>
+                <Box height="small" background={`url(${image_url})`}/>
                     
                 <Grid 
                 rows={["xxsmall", "xxsmall"]} 
@@ -107,15 +110,16 @@ const GameCard = ({id, name, minPlayer, maxPlayer, rating, price, quantity}) => 
             >   
                 <Button
                 icon={<Info size="medium"/>}
-                size="xsmall"
+                size="small"
                 secondary
                 label="Detail"
                 alignSelf="center"
+                onClick={() => history.push(`boardgame/${id}`)}
                 />
                 <Button
                 style={{color:"white"}}
                 icon={<Add color="white"/>}
-                size="xsmall"
+                size="small"
                 primary
                 label="Buy"
                 disabled={quantity <= 0}

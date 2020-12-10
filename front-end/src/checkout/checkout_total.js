@@ -1,26 +1,11 @@
 import {Box, Button, DataTable, Text, Heading} from 'grommet';
-import React, { useContext, useMemo } from 'react';
+import React, { useContext} from 'react';
 import { store } from '../store/store';
 import {FormTrash} from 'grommet-icons';
 
-const TotalPayment = ({updateStep}) => {
+const TotalPayment = ({updateStep, grandTotalData}) => {
     const globalState = useContext(store);
     const {state, dispatch} = globalState;
-    const items = state.cart.items;
-
-    const generateGrandTotalData = (items) => {
-        var total = 0
-        const checkData = items.map(item => {
-            const totalItem = item.quantity * item.price;
-            total = total + totalItem;
-            return {...item, total:totalItem};
-        })
-        const vat = Math.round(total * 0.07);
-        const grandTotal = vat + total;
-        return [...checkData, {name:"Vat",quantity:"", total:vat},{name:"Total",quantity:"", total:grandTotal}];
-    }
-
-    const grandTotalData = useMemo(() => generateGrandTotalData(items), [items])
 
     const removeItem = (id) => {
         dispatch({type:"REMOVE_ITEM", payload:{id}})

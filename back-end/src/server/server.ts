@@ -2,7 +2,8 @@ import IBoardgameRepository from "../interface/boardgame_repository";
 import ITransactionRepository from "../interface/transaction_repository";
 import {ValidateCardNumber, ValidateTransaction, ValidateQuery, ValidateExpiryDate, ValidateItemQuantity, ValidateRouteParams} from "./validate";
 import fastify, { FastifyReply, FastifyRequest, FastifyInstance } from 'fastify';
-import Boardgame from "../model/boardgame";
+
+import {ItemQuantity} from "../model/transaction";
 import RepositoryError from "../error/repository";
 import { MongoError } from "mongodb";
 
@@ -18,12 +19,16 @@ interface IQuery {
 interface IWriteTransactionBody {
     address: string
     total: number
-    items: Boardgame[]
+    items: ItemQuantity[]
+    expiryDate: string
+    cardNumber: string
 }
 
 const buildServer = (boardgameRepository:IBoardgameRepository, transactionRepository:ITransactionRepository):FastifyInstance => {
     const fastifyServer:FastifyInstance = fastify();
+    fastifyServer.register(require('fastify-cors'), { 
 
+    })
     fastifyServer.get<{Querystring:IQuery}>(
         '/boardgames', 
         {
@@ -53,7 +58,7 @@ const buildServer = (boardgameRepository:IBoardgameRepository, transactionReposi
         },
         async (request:FastifyRequest, reply:FastifyReply) => {
             try {
-                const {id}:any = request.query;
+                const {id}:any = request.params;
                 const [boardgames] = await boardgameRepository.FindBoardgames(parseInt(id));
                 if(boardgames.length === 0) {
                     reply.status(404);

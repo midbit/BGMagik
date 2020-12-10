@@ -1,8 +1,8 @@
 const BASE_URL = "http://localhost:8080/"
 
-const BOARDGAMES_URL = () => (BASE_URL + "boardgames")
+export const BOARDGAMES_URL = () => (BASE_URL + "boardgames")
 
-const BOARDGAME_BY_ID_URL = (id) => (BASE_URL + "boardgame/" + id)
+export const BOARDGAME_BY_ID_URL = (id) => (BASE_URL + "boardgames/" + id)
 
-const TRANSACTION_URL = () => (BASE_URL + "transaction")
+export const TRANSACTION_URL = () => (BASE_URL + "transaction")
 

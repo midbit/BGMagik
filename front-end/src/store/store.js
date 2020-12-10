@@ -4,17 +4,7 @@ const initialState = {
     cart:{
         items:[]
     },
-    items:[
-        {
-            id:1,
-            name:"Boardgame 1",
-            rating:4.3,
-            minPlayer:3,
-            maxPlayer:10,
-            price:300,
-            quantity:20
-        }
-    ],
+    items:[],
     page:{
         currentUrl: '',
         maxPage: 1,
@@ -27,6 +17,7 @@ const { Provider } = store;
 const StateProvider = ( { children } ) => {
   const [state, dispatch] = useReducer((state, action) => {
     switch(action.type) {
+
         case 'SET_ITEMS':
             return {...state, items:action.payload};
 
@@ -61,7 +52,7 @@ const StateProvider = ( { children } ) => {
             }
         
         case 'ADD_QUANTITY':
-            const addedBrowseItem = {...state.payload}
+            const addedBrowseItem = {...action.payload}
             const addedBrowseItemList = state.items.map(item => {
                 if(addedBrowseItem.id === item.id)
                 {
@@ -73,7 +64,7 @@ const StateProvider = ( { children } ) => {
              return{...state, items:[...addedBrowseItemList]}
 
         case 'REMOVE_QUANTITY':
-            const removedBrowseItem = {...state.payload}
+            const removedBrowseItem = {...action.payload}
             const removedBrowseItemList = state.items.map(item => {
                 if(removedBrowseItem.id === item.id)
                 {
@@ -85,16 +76,21 @@ const StateProvider = ( { children } ) => {
             return{...state, items:[...removedBrowseItemList]}
 
         case 'INCREMET_PAGE':
-            const incrementPage =+ state.page.currentPage;
+            const incrementPage = state.page.currentPage + 1;
             return {...state, page:{...state.page, currentPage:incrementPage}}
 
         case 'DECREMENT_PAGE':
-            const decretmentPage =-  state.page.currentPage;
+            const decretmentPage = state.page.currentPage -  1;
             return {...state, page:{...state.page, currentPage:decretmentPage}}
 
         case 'CHANGE_URL':
             return {...state, page:{...state.page, currentUrl:action.payload}}
-
+        
+        case 'SET_MAX_PAGE':
+            return {...state, page:{...state.page, maxPage:action.payload}}
+        
+        case 'RESET':
+            return {...initialState}
         default:
             return {...state}
     };

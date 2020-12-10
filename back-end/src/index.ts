@@ -17,7 +17,6 @@ const RunServer = async () => {
         }
         console.log(`Server listening at ${address}`)
     })
-    closeDatabase()
 }
 
 RunServer();

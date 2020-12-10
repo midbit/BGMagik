@@ -38,6 +38,7 @@ class BoardgameRepository implements IBoardgameRepository {
                 return([[], maximumPage]);
             }
             await cursor.skip(skip).limit(20).forEach((game) => {
+                console.log(game)
                 boardgames.push(new Boardgame(
                     game.id,
                     game.name,

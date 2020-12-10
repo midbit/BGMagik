@@ -1,12 +1,19 @@
 import {Box, TextInput, Form, Button, FormField, Heading, TextArea} from 'grommet';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { store } from '../store/store';
+import {PostTransaction} from '../data/transaction';
+import { useHistory } from "react-router-dom";
 
-const PaymentForm = ({updateStep}) => {
+const PaymentForm = ({updateStep, grandTotalData}) => {
+    const globalState = useContext(store);
+    const {state, dispatch} = globalState
+    const history = useHistory();
+
     const initState = {
-        name:'',
+        name:undefined,
         expiry_date:undefined,
-        rating_above:0,
-        type:'All'  
+        card_number:"4111111111111111",
+        security_code:undefined,
     }
 
     const [form, setForm] = useState(initState)
@@ -21,9 +28,24 @@ const PaymentForm = ({updateStep}) => {
         return re.test(value)? undefined: "Invalid expiry date"    
     }
 
-    const onSubmit = (value) => {
-        console.log(value)
-        updateStep(2)
+    const onSubmit = async (value) => {
+        const total = grandTotalData === undefined? 0:grandTotalData[grandTotalData.length-1].total;
+        const items = state.cart.items.map((item) => ({name:item.name, quantity:item.quantity, id:item.id}))
+        const transaction = {
+            total,
+            address: value.address,
+            expiryDate: value.expiry_date,
+            cardNumber: value.card_number,
+            items
+        }
+        const result = await PostTransaction(transaction);
+        if(result.status === 201){
+            dispatch({type:"RESET"})
+            updateStep(2)
+        }
+        else{
+            history.push("/error")
+        }
     }
     return(
         <Box  
@@ -46,6 +68,7 @@ const PaymentForm = ({updateStep}) => {
                     <FormField 
                     name="name" 
                     htmlfor="name" 
+                    required
                     label="Name on Card"
                     >
                         <TextInput 
@@ -66,6 +89,7 @@ const PaymentForm = ({updateStep}) => {
                     </FormField>
                     <FormField 
                     name="expiry_date"
+                    required
                     htmlfor="expiry_date" 
                     label="Expiry Date"
                     validate={validateExpiryDate}
@@ -79,6 +103,7 @@ const PaymentForm = ({updateStep}) => {
                     <FormField 
                     name="security_code" 
                     htmlfor="security_code" 
+                    required
                     label="Security Code"
                     >
                         <TextInput
@@ -89,6 +114,7 @@ const PaymentForm = ({updateStep}) => {
                     <FormField 
                     name="address" 
                     htmlfor="address" 
+                    required
                     label="Address"
                     >
                         <TextArea
