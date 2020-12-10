@@ -5,7 +5,7 @@ import RepositoryError from '../error/repository';
 
 class TransactionRepositoryMockBuilder {
     transactionRepository:ITransactionRepository
-    constructor() {
+    constructor(address: string, total:number, item:any[]) {
         this.transactionRepository = {
             async SaveTransaction(address,total,item):Promise<Transaction> {
                 return new Transaction("13", address, total, item);

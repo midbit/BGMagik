@@ -31,6 +31,14 @@ class BoardgameRepositoryMockBuilder {
         }
     }
 
+    MakeEmpty() {
+        this.boardgameRepository = {
+            async FindBoardgames(id?:number, name?:string, page?:number):Promise<[Boardgame[], number]> {
+                return [[],0];
+           }
+        }
+    }
+
     Build():IBoardgameRepository {
         return this.boardgameRepository;
     }
