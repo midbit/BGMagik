@@ -9,7 +9,7 @@ const RunServer = async () => {
     const boardgameRepository = new BoardgameRepository(database);
     const transactionRepository = new TransactionRepository(database);
     const server = ServerBuilder(boardgameRepository, transactionRepository);
-    server.listen(PORT, (err, address) => {
+    server.listen(PORT, "0.0.0.0", (err, address) => {
         if (err) {
           console.error(err)
           closeDatabase()

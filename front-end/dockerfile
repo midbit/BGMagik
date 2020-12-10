@@ -1,0 +1,15 @@
+FROM node
+
+# set working directory
+WORKDIR /app
+
+
+COPY package.json ./
+COPY package-lock.json ./
+RUN npm install
+RUN npm install -g serve
+COPY src ./src
+COPY public ./public
+RUN ls -al
+RUN npm run-script build
+CMD ["serve", "-s", "build"]
