@@ -1,23 +1,20 @@
 import TransactionRepository from "./transaction";
-import Boardgame from "../model/boardgame";
-import Transaction from "../model/transaction";
+import Transaction, {ItemQuantity} from "../model/transaction";
+import TransactionData from "../fixture/transaction";
 import { Collection } from "mongodb";
 const {MongoClient} = require('mongodb');
 
 describe('Testing reading functioality of the TransactionRepository Class', () => {
 
   let transactionRepository: TransactionRepository;
-  let transactionConnection:Collection
+  let transactionConnection:Collection;
   let connection:any;
   let db:any;
-  const bg1 = new Boardgame(1,"bg1", 3.2,1,5,300,1,["A","B","C"], ["D,E,F"]);
-  const bg2 =  new Boardgame(2,"bg2",3.2,1,5,300,1,["Hand","Luck","Strategy"], ["Nature"]);
-  const bg3 =  new Boardgame(3,"bg3",3.2,1,5,300,1,["Dice","Bluff"], ["Vegas"]);
-  const bg4 = new  Boardgame(4,"bg4",3.2,1,5,300,1,["Negotiate","Draft"], ["Medieval","Military"]);
-  const bg5 = new  Boardgame(5,"bg5",3.2,1,5,300,2,["Negotiate","Fight"], ["Space","Urban"]);
-  const boardgames = [bg1,bg2,bg3,bg4,bg5];
-  const address = "John Street";
-  const total = 1500;
+  let transaction:Transaction;
+  let address = TransactionData.address;
+  let total = TransactionData.total;
+  let items = TransactionData.items;
+ 
 
   beforeAll(async () => {
     connection = await MongoClient.connect(global.__MONGO_URI__, {
@@ -25,21 +22,23 @@ describe('Testing reading functioality of the TransactionRepository Class', () =
       useUnifiedTopology: true
     });
     db = await connection.db("test");
-    transactionConnection = await db.collection("transaction")
+    transactionConnection = await db.collection("transaction");
     transactionRepository = new TransactionRepository(db);
+    transaction = {...TransactionData};
+    
   });
 
   afterAll(async () => {
-    console.log("Done Test Case")
+    console.log("Done Test Case");
     await connection.close();
   });
 
   it('should be able to write the Transaction', async () => {
-    const result = await transactionRepository.SaveTransaction(address,total,boardgames)
-    expect(result.address).toEqual(address)
-    expect(result.items.length).toEqual(boardgames.length)
-    expect(result.total).toEqual(total)
-
+    const result = await transactionRepository.SaveTransaction(address,total,items);
+    expect(result.address).toEqual(address);
+    expect(result.items).toEqual(items);
+    expect(result.total).toEqual(total);
+    expect(result.id).toBeDefined();
 
   });
 
@@ -48,7 +47,7 @@ describe('Testing reading functioality of the TransactionRepository Class', () =
   });
   
   it('should throw an error for negative total', async () => {
-    await expect(transactionRepository.SaveTransaction(address,-1,boardgames)).rejects.toThrow();
+    await expect(transactionRepository.SaveTransaction(address,-1,items)).rejects.toThrow();
   });
   
 });
